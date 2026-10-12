@@ -11,12 +11,14 @@ size = Vector2(243, 540)
 size = Vector2(243, 540)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_8j60k"]
-size = Vector2(474, 40)
+size = Vector2(474, 540)
 
 [node name="World" type="Node2D"]
 script = ExtResource("1_5a7ea")
 
 [node name="Guis" parent="." instance=ExtResource("1_go701")]
+
+[node name="Platforms" type="Node2D" parent="."]
 
 [node name="LeftBodies" type="Node2D" parent="."]
 
@@ -45,21 +47,21 @@ color = Color(0.20871, 0.20871, 0.20871, 1)
 position = Vector2(838.5, 270)
 shape = SubResource("RectangleShape2D_5a7ea")
 
-[node name="Floor" type="StaticBody2D" parent="."]
+[node name="Lava" type="StaticBody2D" parent="."]
 
-[node name="ColorRect2" type="ColorRect" parent="Floor"]
+[node name="ColorRect2" type="ColorRect" parent="Lava"]
 offset_left = 243.0
 offset_top = 500.0
 offset_right = 717.0
-offset_bottom = 540.0
-color = Color(0.326497, 0.635636, 0.408127, 1)
+offset_bottom = 1040.0
+color = Color(1, 0.439216, 0.105882, 1)
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Floor"]
-position = Vector2(480, 520)
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Lava"]
+position = Vector2(480, 770)
 shape = SubResource("RectangleShape2D_8j60k")
 
 [node name="Player" parent="." instance=ExtResource("1_a02cp")]
-position = Vector2(480, 270)
+position = Vector2(488, 276)
 
 [node name="Camera2D" type="Camera2D" parent="Player"]
 rotation = 1.5708
