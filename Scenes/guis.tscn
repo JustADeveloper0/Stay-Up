@@ -1,6 +1,19 @@
-[gd_scene load_steps=2 format=3 uid="uid://bw6laos8vlf6g"]
+[gd_scene load_steps=5 format=3 uid="uid://bw6laos8vlf6g"]
 
 [ext_resource type="Script" uid="uid://0t1kv55fsigl" path="res://Scripts/guis.gd" id="1_qk4y2"]
+[ext_resource type="Shader" uid="uid://cor20dqegwnf5" path="res://Shaders/circle.gdshader" id="2_1ewd1"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_i1ddp"]
+shader = ExtResource("2_1ewd1")
+shader_parameter/circle_color = Color(1, 1, 1, 1)
+shader_parameter/radius = 0.48
+shader_parameter/edge_softness = 0.005
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_dgr2b"]
+shader = ExtResource("2_1ewd1")
+shader_parameter/circle_color = Color(1, 1, 1, 1)
+shader_parameter/radius = 0.48
+shader_parameter/edge_softness = 0.005
 
 [node name="Guis" type="Control"]
 layout_mode = 3
@@ -13,12 +26,14 @@ script = ExtResource("1_qk4y2")
 
 [node name="Start" type="ColorRect" parent="."]
 z_index = 5
+material = SubResource("ShaderMaterial_i1ddp")
 layout_mode = 0
 offset_left = -8.0
 offset_top = -8.0
 
 [node name="End" type="ColorRect" parent="."]
 z_index = 5
+material = SubResource("ShaderMaterial_dgr2b")
 layout_mode = 0
 offset_left = -8.0
 offset_top = -8.0

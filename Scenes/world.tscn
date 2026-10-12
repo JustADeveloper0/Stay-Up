@@ -1,8 +1,12 @@
-[gd_scene load_steps=7 format=3 uid="uid://c7kihj2u2kokv"]
+[gd_scene load_steps=15 format=3 uid="uid://c7kihj2u2kokv"]
 
 [ext_resource type="Script" uid="uid://drj04vtq70okt" path="res://Scripts/world.gd" id="1_5a7ea"]
 [ext_resource type="PackedScene" uid="uid://kpaxoimsj2bw" path="res://Scenes/player.tscn" id="1_a02cp"]
 [ext_resource type="PackedScene" uid="uid://bw6laos8vlf6g" path="res://Scenes/guis.tscn" id="1_go701"]
+[ext_resource type="Shader" uid="uid://df5nx2o3866yu" path="res://Shaders/lava.gdshader" id="3_8j60k"]
+[ext_resource type="Texture2D" uid="uid://0ngc5aeheg0y" path="res://Assets/Wall.png" id="3_fo5ed"]
+[ext_resource type="Texture2D" uid="uid://i1dpoldcpckg" path="res://Assets/Death.png" id="5_o06y3"]
+[ext_resource type="Texture2D" uid="uid://dcj1rm8aynrcm" path="res://Assets/RestartButton.png" id="6_k7acu"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_go701"]
 size = Vector2(243, 540)
@@ -10,8 +14,33 @@ size = Vector2(243, 540)
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_5a7ea"]
 size = Vector2(243, 540)
 
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_8j60k"]
+noise_type = 0
+frequency = 0.03
+fractal_octaves = 4
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_fo5ed"]
+seamless = true
+noise = SubResource("FastNoiseLite_8j60k")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_fo5ed"]
+shader = ExtResource("3_8j60k")
+shader_parameter/noise_texture = SubResource("NoiseTexture2D_fo5ed")
+shader_parameter/scroll_x = 0.0
+shader_parameter/scroll_y = -0.15
+shader_parameter/noise_scale = 1.0
+shader_parameter/color_1 = Color(1, 0.133, 0, 1)
+shader_parameter/color_2 = Color(1, 0.467, 0, 1)
+shader_parameter/color_3 = Color(1, 0.933, 0, 1)
+shader_parameter/oscillation_speed = 1.0
+shader_parameter/oscillation_strength = 0.25
+
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_8j60k"]
-size = Vector2(474, 540)
+size = Vector2(474, 459)
+
+[sub_resource type="LabelSettings" id="LabelSettings_5v1tr"]
+outline_size = 7
+outline_color = Color(0, 0, 0, 1)
 
 [node name="World" type="Node2D"]
 script = ExtResource("1_5a7ea")
@@ -24,12 +53,12 @@ script = ExtResource("1_5a7ea")
 
 [node name="LeftBody" type="StaticBody2D" parent="LeftBodies"]
 
-[node name="ColorRect4" type="ColorRect" parent="LeftBodies/LeftBody"]
-offset_right = 243.0
-offset_bottom = 540.0
-color = Color(0.20871, 0.20871, 0.20871, 1)
+[node name="Sprite2D" type="Sprite2D" parent="LeftBodies/LeftBody"]
+position = Vector2(121.5, 270)
+texture = ExtResource("3_fo5ed")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="LeftBodies/LeftBody"]
+visible = false
 position = Vector2(121.5, 270)
 shape = SubResource("RectangleShape2D_go701")
 
@@ -37,19 +66,19 @@ shape = SubResource("RectangleShape2D_go701")
 
 [node name="RightBody" type="StaticBody2D" parent="RightBodies"]
 
-[node name="ColorRect3" type="ColorRect" parent="RightBodies/RightBody"]
-offset_left = 717.0
-offset_right = 960.0
-offset_bottom = 540.0
-color = Color(0.20871, 0.20871, 0.20871, 1)
+[node name="Sprite2D" type="Sprite2D" parent="RightBodies/RightBody"]
+position = Vector2(838.5, 270)
+texture = ExtResource("3_fo5ed")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="RightBodies/RightBody"]
+visible = false
 position = Vector2(838.5, 270)
 shape = SubResource("RectangleShape2D_5a7ea")
 
 [node name="Lava" type="StaticBody2D" parent="."]
 
 [node name="ColorRect2" type="ColorRect" parent="Lava"]
+material = SubResource("ShaderMaterial_fo5ed")
 offset_left = 243.0
 offset_top = 500.0
 offset_right = 717.0
@@ -57,8 +86,47 @@ offset_bottom = 1040.0
 color = Color(1, 0.439216, 0.105882, 1)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Lava"]
-position = Vector2(480, 770)
+visible = false
+position = Vector2(480, 790.5)
 shape = SubResource("RectangleShape2D_8j60k")
+
+[node name="LavaArea" type="Area2D" parent="Lava"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Lava/LavaArea"]
+visible = false
+position = Vector2(480, 790)
+shape = SubResource("RectangleShape2D_8j60k")
+
+[node name="Death" type="Control" parent="."]
+z_index = 10
+layout_mode = 3
+anchors_preset = 0
+offset_left = -174.0
+offset_top = 259.0
+offset_right = -134.0
+offset_bottom = 299.0
+
+[node name="Sprite2D" type="Sprite2D" parent="Death"]
+texture = ExtResource("5_o06y3")
+
+[node name="Score" type="Label" parent="Death"]
+layout_mode = 0
+offset_left = -74.0
+offset_top = -25.0
+offset_right = 73.0
+offset_bottom = -2.0
+text = "Score: 9999"
+label_settings = SubResource("LabelSettings_5v1tr")
+horizontal_alignment = 1
+
+[node name="Restart Button" type="Button" parent="Death"]
+layout_mode = 0
+offset_left = -54.0
+offset_top = 50.0
+offset_right = 54.0
+offset_bottom = 108.0
+icon = ExtResource("6_k7acu")
+flat = true
 
 [node name="Player" parent="." instance=ExtResource("1_a02cp")]
 position = Vector2(488, 276)
@@ -69,3 +137,10 @@ scale = Vector2(1.00206, 0.836705)
 limit_left = 0
 limit_right = 960
 limit_bottom = 540
+
+[node name="LavaSpeedIncrease" type="Timer" parent="."]
+wait_time = 30.0
+
+[connection signal="body_entered" from="Lava/LavaArea" to="." method="_on_lava_area_body_entered"]
+[connection signal="button_down" from="Death/Restart Button" to="." method="_on_restart_button_button_down"]
+[connection signal="timeout" from="LavaSpeedIncrease" to="." method="_on_lava_speedincrease_timeout"]

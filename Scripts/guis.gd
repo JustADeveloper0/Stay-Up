@@ -35,6 +35,12 @@ func get_power(length):
 	return (slope * length) + offset
 
 func _input(event):
+	if player == null:
+		return
+	
+	if player.get_dead():
+		return
+	
 	if event is InputEventMouseButton:
 		if event.button_index == MOUSE_BUTTON_LEFT:
 			var pos = get_local_mouse_position() - (start.size / 2)
@@ -50,27 +56,28 @@ func _input(event):
 			else:
 				mouse_held = false
 				
-				var distance = sqrt(pow(start_pos.x - end_pos.x, 2) + pow(start_pos.y - end_pos.y, 2))
+				if start_pos != null && end_pos != null:
+					var distance = sqrt(pow(start_pos.x - end_pos.x, 2) + pow(start_pos.y - end_pos.y, 2))
 				
-				if distance >= min_length:
-					distance = clamp(distance, min_length, max_length)
-					var trajectory = (start_pos - end_pos).normalized()
+					if distance >= min_length:
+						distance = clamp(distance, min_length, max_length)
+						var trajectory = (start_pos - end_pos).normalized()
+						
+						player.set_target_rotation(atan2(trajectory.y, trajectory.x))
+						
+						var power = get_power(distance)
+						
+						#print(power)
+						
+						var impulse = trajectory * power
+						
+						player.apply_impulse(impulse)
 					
-					player.set_target_rotation(atan2(trajectory.y, trajectory.x))
+					start_pos = null
+					end_pos = null
 					
-					var power = get_power(distance)
-					
-					print(power)
-					
-					var impulse = trajectory * power
-					
-					player.apply_impulse(impulse)
-				
-				start_pos = null
-				end_pos = null
-				
-				start.position = start_inital_pos
-				end.position = end_inital_pos
+					start.position = start_inital_pos
+					end.position = end_inital_pos
 
 func _physics_process(delta: float) -> void:
 	var pos = get_global_mouse_position() - (start.size / 2)

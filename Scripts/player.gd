@@ -1,5 +1,8 @@
 extends CharacterBody2D
 
+@onready var cpu_particles_2d: CPUParticles2D = $CPUParticles2D
+@onready var color_rect: ColorRect = $ColorRect
+
 var gravity_enabled = false
 var gravity_multiplier = 0.1
 
@@ -9,6 +12,11 @@ var target_impulse = null
 
 var energy_loss = 0.8
 var friction = 0.9
+
+var dead = false
+
+func get_dead():
+	return dead
 
 func set_gravity_enabled(condition: bool):
 	gravity_enabled = condition
@@ -21,6 +29,11 @@ func set_target_rotation(radians):
 
 func apply_impulse(impulse):
 	target_impulse = impulse
+
+func die():
+	color_rect.visible = false
+	cpu_particles_2d.emitting = true
+	dead = true
 
 func _ready():
 	pass
@@ -50,3 +63,6 @@ func _physics_process(delta: float) -> void:
 		var tangent = velocity - normal * normal_speed
 		
 		velocity = -normal * normal_speed * energy_loss + tangent * friction
+
+func is_player():
+	pass
